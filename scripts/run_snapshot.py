@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
-"""Entrypoint for every pre-open/hourly cloud routine firing.
+"""Entrypoint for every ~15-min GitHub Actions snapshot run.
 
 Owns: trading-day/window gating (no-ops cleanly outside the intended window
 - expected, not an error), fetching data, scoring, appending to
 snapshots/<today>.json, commit+push. Run from the repo root.
+
+Auto-detects phase from the real US/Eastern clock rather than taking a
+--mode flag: the workflow's cron fires broadly across both DST regimes, and
+this script decides what (if anything) to actually do.
 """
 
-import argparse
 import sys
 from datetime import datetime, timezone
 
@@ -17,40 +20,32 @@ from lib import premarket_model, intraday_trend, breadth, snapshot_store
 
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--mode", choices=["preopen", "hourly"], required=True)
-    args = ap.parse_args()
-
     now = cal.now_et()
     phase = cal.session_phase(now)
 
     if not cal.is_trading_day(now.date()):
         print(f"NO-OP: {now.date()} is not a US market trading day.")
         return
-    if args.mode == "preopen" and phase != "preopen":
-        print(f"NO-OP: fired for --mode=preopen but current ET session phase is '{phase}' "
-              f"(now={now.isoformat()}). Likely DST-drifted cron slot; skipping.")
-        return
-    if args.mode == "hourly" and phase != "session":
-        print(f"NO-OP: fired for --mode=hourly but current ET session phase is '{phase}' "
-              f"(now={now.isoformat()}). Likely DST-drifted cron slot or outside session; skipping.")
+    if phase == "closed":
+        print(f"NO-OP: current ET session phase is 'closed' (now={now.isoformat()}). "
+              f"Outside the 9:15am-4:00pm ET window; skipping.")
         return
 
     session_day = now.date().isoformat()
     now_utc_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    checkpoint_label = f"{now.strftime('%H:%M')} ET " + ("pre-open" if args.mode == "preopen" else "checkpoint")
+    checkpoint_label = f"{now.strftime('%H:%M')} ET " + ("pre-open" if phase == "preopen" else "checkpoint")
 
     entry = {
         "fired_at_et": now.isoformat(),
-        "phase": args.mode,
+        "phase": phase,
         "checkpoint_label": checkpoint_label,
     }
 
-    print(f"Fetching market basket ({args.mode})...")
-    b = breadth.snapshot(args.mode, session_day, now_utc_iso if args.mode == "hourly" else None)
+    print(f"Fetching market basket ({phase})...")
+    b = breadth.snapshot(phase, session_day, now_utc_iso if phase == "session" else None)
     entry.update(b)
 
-    if args.mode == "preopen":
+    if phase == "preopen":
         print("Training pre-market direction model...")
         pm = premarket_model.train_and_predict(now.date())
         if pm:

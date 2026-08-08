@@ -1,0 +1,38 @@
+name: Market pulse snapshot
+
+on:
+  schedule:
+    # Every 15 min, UTC 13:00-21:45, Mon-Fri. Covers 9:00am-5:45pm ET (EDT) and
+    # 8:00am-4:45pm ET (EST) with margin either side of the true 9:15am-4:00pm ET
+    # window - lib/market_calendar.py gates the real behavior, so over-firing here
+    # is safe and just produces a clean no-op.
+    - cron: "*/15 13-21 * * 1-5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Configure git identity for auto-commits
+        run: |
+          git config user.name "market-pulse-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: Run snapshot
+        env:
+          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_API_SECRET: ${{ secrets.ALPACA_API_SECRET }}
+        run: python scripts/run_snapshot.py

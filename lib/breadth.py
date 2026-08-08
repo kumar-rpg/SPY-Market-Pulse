@@ -40,7 +40,7 @@ def _chg_pct_intraday(symbol, session_day, now_utc_iso):
 
 
 def snapshot(phase, session_day, now_utc_iso=None):
-    """phase: 'preopen' uses daily-bar change; 'hourly' uses live intraday bars."""
+    """phase: 'preopen' uses daily-bar change; 'session' uses live intraday bars."""
     basket = {}
     for t in TICKERS:
         if phase == "preopen":

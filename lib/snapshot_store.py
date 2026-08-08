@@ -2,7 +2,7 @@
 
 Each cloud routine firing is a fresh, isolated checkout with no shared disk,
 so the git repo itself is the persistence layer: pull before reading, push
-after appending. A single pull-rebase-retry covers the (unlikely, at hourly
+after appending. A single pull-rebase-retry covers the (unlikely, at 15-min
 cadence) case of two firings racing; a second failure is surfaced rather than
 retried forever.
 """

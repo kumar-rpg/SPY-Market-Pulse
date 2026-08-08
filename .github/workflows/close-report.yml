@@ -1,0 +1,37 @@
+name: Market pulse close report
+
+on:
+  schedule:
+    # ~16:20 ET (EDT); lands ~15:20 ET during EST. lib/market_calendar.py only
+    # gates the trading-day check here (not a strict close-time check), so an
+    # off-by-DST-hour firing still produces a same-day report, just slightly
+    # early/late relative to the true close.
+    - cron: "20 20 * * 1-5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  close-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Configure git identity for auto-commits
+        run: |
+          git config user.name "market-pulse-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+      - name: Build and deploy report
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: python scripts/run_close_report.py

@@ -7,7 +7,12 @@ on:
     # off-by-DST-hour firing still produces a same-day report, just slightly
     # early/late relative to the true close.
     - cron: "20 20 * * 1-5"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Optional YYYY-MM-DD override for a manual backfill/rerun (skips the trading-day gate). Leave blank for today."
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -34,4 +39,10 @@ jobs:
       - name: Build and deploy report
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: python scripts/run_close_report.py
+          DATE_OVERRIDE: ${{ inputs.date }}
+        run: |
+          if [ -n "$DATE_OVERRIDE" ]; then
+            python scripts/run_close_report.py --date "$DATE_OVERRIDE"
+          else
+            python scripts/run_close_report.py
+          fi

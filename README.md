@@ -19,6 +19,7 @@ safe to over-fire — off-window runs just no-op.
 - `lib/premarket_model.py` — pre-market logistic direction model (refit each morning).
 - `lib/intraday_trend.py` — partial-session trend scoring (net move, slope, CLV, VWAP).
 - `lib/breadth.py` — SPY/QQQ/DIA/IWM/VIXY basket as an "overall market" proxy.
+- `lib/portfolio.py` — Alpaca paper-account equity/day-change + open positions with unrealized P&L (reuses the same `ALPACA_API_KEY`/`ALPACA_API_SECRET`, no extra secret needed). A fetch failure here soft-fails a checkpoint rather than aborting it.
 - `lib/snapshot_store.py` — git-backed read/append/push of the day's snapshot file.
 - `lib/report_builder.py` — renders the self-contained HTML report.
 - `lib/vercel_deploy.py` — deploys the report via Vercel's REST API.

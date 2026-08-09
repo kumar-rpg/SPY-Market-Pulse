@@ -55,6 +55,43 @@ def _svg_chart(pts):
             f"{dots}</svg>")
 
 
+def _pl_class(value):
+    if value is None:
+        return "dir-unknown"
+    return "dir-up" if value > 0 else "dir-down" if value < 0 else "dir-neutral"
+
+
+def _latest_portfolio(entries):
+    for e in reversed(entries):
+        if e.get("portfolio"):
+            return e["portfolio"], e.get("checkpoint_label", "")
+    return None, ""
+
+
+def _portfolio_card(entries):
+    p, at = _latest_portfolio(entries)
+    if not p:
+        return ""
+    cls = _pl_class(p.get("day_change"))
+    pos_rows = "".join(
+        f"<tr><td>{pos['symbol']}</td><td>{pos['qty']}</td><td>{pos['avg_entry_price']}</td>"
+        f"<td>{pos['current_price']}</td><td>{pos['market_value']}</td>"
+        f"<td class='{_pl_class(pos['unrealized_pl'])}'>{pos['unrealized_pl']:+.2f} ({pos['unrealized_plpc']:+.2f}%)</td></tr>"
+        for pos in p.get("positions", [])
+    ) or "<tr><td colspan='6' class='muted'>No open positions.</td></tr>"
+
+    return f"""<div class="card">
+    <h2>Portfolio (Alpaca paper account, as of {at})</h2>
+    <div class="pl-line">Equity: <b>${p['equity']:.2f}</b>
+      &nbsp;|&nbsp; Day change: <b class="{cls}">{p['day_change']:+.2f} ({p['day_change_pct']:+.2f}%)</b>
+      &nbsp;|&nbsp; Cash: ${p['cash']:.2f}</div>
+    <table>
+      <thead><tr><th>Symbol</th><th>Qty</th><th>Avg entry</th><th>Current</th><th>Mkt value</th><th>Unrealized P&amp;L</th></tr></thead>
+      <tbody>{pos_rows}</tbody>
+    </table>
+  </div>"""
+
+
 def _entry_html(e):
     verdict = _verdict_for_entry(e)
     rows = []
@@ -72,6 +109,11 @@ def _entry_html(e):
     if mc.get("direction"):
         rows.append(f"<div>Market composite (SPY/QQQ/DIA/IWM/VIXY): <b>{mc.get('direction')}</b> "
                      f"score={mc.get('score')} — {mc.get('note', '')}</div>")
+    if e.get("portfolio"):
+        p = e["portfolio"]
+        rows.append(f"<div>Portfolio: equity ${p['equity']:.2f}, day change "
+                     f"<span class='{_pl_class(p['day_change'])}'>{p['day_change']:+.2f} ({p['day_change_pct']:+.2f}%)</span>, "
+                     f"{len(p.get('positions', []))} open position(s)</div>")
     basket = e.get("basket", {})
     basket_bits = ", ".join(
         f"{t}: {basket[t]['last']} ({basket[t]['chg_pct']:+.2f}%)" if basket.get(t) and basket[t].get('chg_pct') is not None
@@ -88,6 +130,7 @@ def build(snapshot_data):
     verdict, verdict_at = _final_verdict(entries) if entries else ("NO DATA", "")
     chart = _svg_chart(_price_series(entries))
     rows_html = "".join(_entry_html(e) for e in entries) or "<tr><td colspan='3'>No snapshots recorded.</td></tr>"
+    portfolio_card = _portfolio_card(entries)
 
     return f"""<!doctype html>
 <html><head><meta charset="utf-8"><title>SPY Market Pulse — {date_str}</title>
@@ -106,9 +149,12 @@ def build(snapshot_data):
   td.dir-down {{ color: #c0392b; font-weight: 600; }}
   td.dir-neutral, td.dir-mixed, td.dir-unknown {{ color: #666; font-weight: 600; }}
   .chart-wrap {{ margin-top: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 0.5rem; }}
+  .card {{ margin-top: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 1rem; }}
+  .card h2 {{ font-size: 1rem; margin: 0 0 0.5rem 0; }}
+  .pl-line {{ font-size: 0.95rem; margin-bottom: 0.5rem; }}
   @media (prefers-color-scheme: dark) {{
     body {{ background: #14161a; color: #e6e6e6; }}
-    .chart-wrap {{ border-color: #2a2d33; }}
+    .chart-wrap, .card {{ border-color: #2a2d33; }}
     th, td {{ border-color: #2a2d33; }}
   }}
 </style></head>
@@ -117,11 +163,13 @@ def build(snapshot_data):
   <div class="muted">{date_str} — {len(entries)} checkpoint(s) recorded</div>
   <div class="banner dir-{verdict.lower().replace(' ', '-')}">Final read: {verdict}{f' (as of {verdict_at})' if verdict_at else ''}</div>
   <div class="chart-wrap">{chart}</div>
+  {portfolio_card}
   <table>
     <thead><tr><th>Checkpoint</th><th>Verdict</th><th>Detail</th></tr></thead>
     <tbody>{rows_html}</tbody>
   </table>
   <p class="muted">Generated automatically. SPY intraday scoring uses Alpaca's free IEX feed (can lag real-time up to ~15 min).
-  "Market overall" is approximated via SPY/QQQ/DIA/IWM/VIXY — Alpaca's free tier has no true advance/decline breadth data.</p>
+  "Market overall" is approximated via SPY/QQQ/DIA/IWM/VIXY — Alpaca's free tier has no true advance/decline breadth data.
+  Portfolio figures are from an Alpaca paper (simulated) trading account, not real money.</p>
   <script>const SNAPSHOT_DATA = {json.dumps(snapshot_data)};</script>
 </body></html>"""

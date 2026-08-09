@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 sys.path.insert(0, ".")
 
 from lib import market_calendar as cal
-from lib import premarket_model, intraday_trend, breadth, snapshot_store
+from lib import premarket_model, intraday_trend, breadth, portfolio, snapshot_store
 
 
 def main():
@@ -44,6 +44,15 @@ def main():
     print(f"Fetching market basket ({phase})...")
     b = breadth.snapshot(phase, session_day, now_utc_iso if phase == "session" else None)
     entry.update(b)
+
+    print("Fetching Alpaca portfolio snapshot...")
+    try:
+        entry["portfolio"] = portfolio.snapshot()
+        p = entry["portfolio"]
+        print(f"  -> equity ${p['equity']:.2f}  day change {p['day_change']:+.2f} "
+              f"({p['day_change_pct']:+.2f}%)  {len(p['positions'])} open position(s)")
+    except Exception as e:
+        print(f"  -> WARN: portfolio fetch failed, skipping for this checkpoint: {e}")
 
     if phase == "preopen":
         print("Training pre-market direction model...")

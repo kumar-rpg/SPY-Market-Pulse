@@ -24,35 +24,55 @@ def _final_verdict(entries):
     return "UNKNOWN", ""
 
 
-def _price_series(entries):
+def _ohlc_series(entries):
     pts = []
     for e in entries:
-        price = None
         if e.get("intraday_trend") and not e["intraday_trend"].get("insufficient_bars"):
-            price = e["intraday_trend"].get("last_price")
-        elif e.get("basket", {}).get("SPY"):
-            price = e["basket"]["SPY"].get("last")
-        if price is not None:
-            pts.append({"label": e.get("checkpoint_label", ""), "price": price})
+            it = e["intraday_trend"]
+            pts.append({
+                "label": e.get("checkpoint_label", ""),
+                "open": it.get("session_open"),
+                "high": it.get("session_high"),
+                "low": it.get("session_low"),
+                "close": it.get("last_price"),
+            })
     return pts
 
 
-def _svg_chart(pts):
-    if len(pts) < 2:
+def _svg_candlestick_chart(pts):
+    if len(pts) < 1:
         return "<p class='muted'>Not enough data points yet for a chart.</p>"
     w, h, pad = 760, 220, 30
-    prices = [p["price"] for p in pts]
-    lo, hi = min(prices), max(prices)
+    all_prices = []
+    for p in pts:
+        all_prices.extend([p["high"], p["low"]])
+    lo, hi = min(all_prices), max(all_prices)
     span = (hi - lo) or 1
     n = len(pts)
-    xs = [pad + i * (w - 2 * pad) / (n - 1) for i in range(n)]
-    ys = [h - pad - (p - lo) / span * (h - 2 * pad) for p in prices]
-    path = " ".join(f"{'M' if i == 0 else 'L'}{xs[i]:.1f},{ys[i]:.1f}" for i in range(n))
-    dots = "".join(f"<circle cx='{xs[i]:.1f}' cy='{ys[i]:.1f}' r='3' fill='#3b6fe0'>"
-                    f"<title>{pts[i]['label']}: {pts[i]['price']}</title></circle>" for i in range(n))
-    return (f"<svg viewBox='0 0 {w} {h}' width='100%' height='{h}' role='img' aria-label='SPY price through the session'>"
-            f"<path d='{path}' fill='none' stroke='#3b6fe0' stroke-width='2'/>"
-            f"{dots}</svg>")
+    wick_width = 1
+    candle_width = (w - 2 * pad) / (n * 2) if n > 0 else 0
+    candle_width = min(candle_width, 12)
+
+    candles = []
+    for i, p in enumerate(pts):
+        x = pad + (i + 0.5) * (w - 2 * pad) / n
+        y_high = h - pad - (p["high"] - lo) / span * (h - 2 * pad)
+        y_low = h - pad - (p["low"] - lo) / span * (h - 2 * pad)
+        y_open = h - pad - (p["open"] - lo) / span * (h - 2 * pad)
+        y_close = h - pad - (p["close"] - lo) / span * (h - 2 * pad)
+
+        color = "#1e7e34" if p["close"] >= p["open"] else "#c0392b"
+
+        y_body_top = min(y_open, y_close)
+        y_body_bot = max(y_open, y_close)
+        body_h = max(y_body_bot - y_body_top, 1)
+
+        candles.append(f"<line x1='{x:.1f}' y1='{y_high:.1f}' x2='{x:.1f}' y2='{y_low:.1f}' stroke='{color}' stroke-width='{wick_width}' opacity='0.7'/>")
+        candles.append(f"<rect x='{x - candle_width/2:.1f}' y='{y_body_top:.1f}' width='{candle_width:.1f}' height='{body_h:.1f}' fill='{color}' stroke='{color}' stroke-width='0.5'/>")
+        candles.append(f"<title>{p['label']}: O={p['open']:.2f} H={p['high']:.2f} L={p['low']:.2f} C={p['close']:.2f}</title>")
+
+    return (f"<svg viewBox='0 0 {w} {h}' width='100%' height='{h}' role='img' aria-label='SPY candlestick chart'>"
+            f"{''.join(candles)}</svg>")
 
 
 def _pl_class(value):
@@ -128,7 +148,7 @@ def build(snapshot_data):
     date_str = snapshot_data.get("date", "")
     entries = snapshot_data.get("entries", [])
     verdict, verdict_at = _final_verdict(entries) if entries else ("NO DATA", "")
-    chart = _svg_chart(_price_series(entries))
+    chart = _svg_candlestick_chart(_ohlc_series(entries))
     rows_html = "".join(_entry_html(e) for e in entries) or "<tr><td colspan='3'>No snapshots recorded.</td></tr>"
     portfolio_card = _portfolio_card(entries)
 

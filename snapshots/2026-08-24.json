@@ -546,6 +546,84 @@
         "conviction": "n/a",
         "support": 0
       }
+    },
+    {
+      "fired_at_et": "2026-08-24T15:46:59.259809-04:00",
+      "phase": "session",
+      "checkpoint_label": "15:46 ET checkpoint",
+      "basket": {
+        "SPY": {
+          "last": 763.59,
+          "chg_pct": -0.268
+        },
+        "QQQ": {
+          "last": 706.94,
+          "chg_pct": -0.907
+        },
+        "DIA": {
+          "last": 533.82,
+          "chg_pct": 0.306
+        },
+        "IWM": {
+          "last": 298.02,
+          "chg_pct": -0.64
+        },
+        "VIXY": {
+          "last": 18.17,
+          "chg_pct": -0.11
+        }
+      },
+      "market_composite": {
+        "direction": "DOWN",
+        "score": 0.25,
+        "note": "1/4 of SPY/QQQ/DIA/IWM positive, VIXY down"
+      },
+      "portfolio": {
+        "equity": 4538.35,
+        "cash": 4573.35,
+        "portfolio_value": 4538.35,
+        "day_change": -665.0,
+        "day_change_pct": -12.78,
+        "positions": [
+          {
+            "symbol": "SPY260918P00777000",
+            "qty": -5.0,
+            "avg_entry_price": 11.23,
+            "current_price": 17.2,
+            "market_value": -8600.0,
+            "unrealized_pl": -2985.0,
+            "unrealized_plpc": -53.161
+          },
+          {
+            "symbol": "SPY260918P00779000",
+            "qty": 5.0,
+            "avg_entry_price": 12.16,
+            "current_price": 17.13,
+            "market_value": 8565.0,
+            "unrealized_pl": 2485.0,
+            "unrealized_plpc": 40.872
+          }
+        ]
+      },
+      "intraday_trend": {
+        "insufficient_bars": false,
+        "bars_observed": 76,
+        "session_open": 764.75,
+        "last_price": 763.54,
+        "session_high": 765.19,
+        "session_low": 762.08,
+        "net_move_pct": -0.158,
+        "neutral_band_pct": 0.309,
+        "band_note": "vs trailing-60d full-day sigma band; not scaled for elapsed time, partial-day reads are soft",
+        "slope_pct_per_hour": 0.019,
+        "r2": 0.182,
+        "clv": 0.469,
+        "vwap": 763.77,
+        "vwap_above_pct": 52.6,
+        "direction": "NEUTRAL",
+        "conviction": "n/a",
+        "support": 0
+      }
     }
   ]
 }

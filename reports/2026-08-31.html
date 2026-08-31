@@ -1,0 +1,50 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>SPY Market Pulse — 2026-08-31</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; background: #fff; }
+  h1 { font-size: 1.4rem; margin-bottom: 0.2rem; }
+  .muted { color: #666; font-size: 0.85rem; }
+  .banner { padding: 1rem; border-radius: 8px; margin: 1rem 0; font-size: 1.1rem; font-weight: 600; }
+  .banner.dir-up { background: #e6f4ea; color: #1e7e34; }
+  .banner.dir-down { background: #fdecea; color: #c0392b; }
+  .banner.dir-neutral, .banner.dir-mixed, .banner.dir-unknown, .banner.dir-no { background: #f1f1f1; color: #555; }
+  table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+  th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #eee; vertical-align: top; font-size: 0.9rem; }
+  td.dir-up { color: #1e7e34; font-weight: 600; }
+  td.dir-down { color: #c0392b; font-weight: 600; }
+  td.dir-neutral, td.dir-mixed, td.dir-unknown { color: #666; font-weight: 600; }
+  .chart-wrap { margin-top: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 0.5rem; }
+  .card { margin-top: 1rem; border: 1px solid #eee; border-radius: 8px; padding: 1rem; }
+  .card h2 { font-size: 1rem; margin: 0 0 0.5rem 0; }
+  .pl-line { font-size: 0.95rem; margin-bottom: 0.5rem; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #14161a; color: #e6e6e6; }
+    .chart-wrap, .card { border-color: #2a2d33; }
+    th, td { border-color: #2a2d33; }
+  }
+</style></head>
+<body>
+  <h1>SPY Market Pulse</h1>
+  <div class="muted">2026-08-31 — 1 checkpoint(s) recorded</div>
+  <div class="banner dir-neutral">Final read: NEUTRAL (as of 15:28 ET checkpoint)</div>
+  <div class="chart-wrap"><svg viewBox='0 0 760 220' width='100%' height='220' role='img' aria-label='SPY candlestick chart'><line x1='380.0' y1='30.0' x2='380.0' y2='190.0' stroke='#c0392b' stroke-width='1' opacity='0.7'/><rect x='374.0' y='45.1' width='12.0' height='43.1' fill='#c0392b' stroke='#c0392b' stroke-width='0.5'/><title>15:28 ET checkpoint: O=767.32 H=767.59 L=764.73 C=766.55</title></svg></div>
+  <div class="card">
+    <h2>Portfolio (Alpaca paper account, as of 15:28 ET checkpoint)</h2>
+    <div class="pl-line">Equity: <b>$4608.35</b>
+      &nbsp;|&nbsp; Day change: <b class="dir-down">-215.00 (-4.46%)</b>
+      &nbsp;|&nbsp; Cash: $4573.35</div>
+    <table>
+      <thead><tr><th>Symbol</th><th>Qty</th><th>Avg entry</th><th>Current</th><th>Mkt value</th><th>Unrealized P&amp;L</th></tr></thead>
+      <tbody><tr><td>SPY260918P00777000</td><td>-5.0</td><td>11.23</td><td>13.85</td><td>-6925.0</td><td class='dir-down'>-1310.00 (-23.33%)</td></tr><tr><td>SPY260918P00779000</td><td>5.0</td><td>12.16</td><td>13.92</td><td>6960.0</td><td class='dir-up'>+880.00 (+14.47%)</td></tr></tbody>
+    </table>
+  </div>
+  <table>
+    <thead><tr><th>Checkpoint</th><th>Verdict</th><th>Detail</th></tr></thead>
+    <tbody><tr><td>15:28 ET checkpoint</td><td class='dir-neutral'>NEUTRAL</td><td><div>Intraday trend: <b>NEUTRAL</b> conviction=n/a (0/4) — net -0.1%, slope 0.009%/hr, R²=0.076, CLV=0.636, VWAP above 36.1%</div><div>Market composite (SPY/QQQ/DIA/IWM/VIXY): <b>DOWN</b> score=0.0 — 0/4 of SPY/QQQ/DIA/IWM positive, VIXY down</div><div>Portfolio: equity $4608.35, day change <span class='dir-down'>-215.00 (-4.46%)</span>, 2 open position(s)</div><div class='muted'>SPY: 766.55 (-0.35%), QQQ: 715.31 (-0.16%), DIA: 531.83 (-0.60%), IWM: 293.56 (-0.74%), VIXY: 17.36 (-1.53%)</div></td></tr></tbody>
+  </table>
+  <p class="muted">Generated automatically. SPY intraday scoring uses Alpaca's free IEX feed (can lag real-time up to ~15 min).
+  "Market overall" is approximated via SPY/QQQ/DIA/IWM/VIXY — Alpaca's free tier has no true advance/decline breadth data.
+  Portfolio figures are from an Alpaca paper (simulated) trading account, not real money.</p>
+  <script>const SNAPSHOT_DATA = {"date": "2026-08-31", "entries": [{"fired_at_et": "2026-08-31T15:28:03.714542-04:00", "phase": "session", "checkpoint_label": "15:28 ET checkpoint", "basket": {"SPY": {"last": 766.55, "chg_pct": -0.355}, "QQQ": {"last": 715.31, "chg_pct": -0.158}, "DIA": {"last": 531.83, "chg_pct": -0.605}, "IWM": {"last": 293.56, "chg_pct": -0.74}, "VIXY": {"last": 17.36, "chg_pct": -1.531}}, "market_composite": {"direction": "DOWN", "score": 0.0, "note": "0/4 of SPY/QQQ/DIA/IWM positive, VIXY down"}, "portfolio": {"equity": 4608.35, "cash": 4573.35, "portfolio_value": 4608.35, "day_change": -215.0, "day_change_pct": -4.457, "positions": [{"symbol": "SPY260918P00777000", "qty": -5.0, "avg_entry_price": 11.23, "current_price": 13.85, "market_value": -6925.0, "unrealized_pl": -1310.0, "unrealized_plpc": -23.33}, {"symbol": "SPY260918P00779000", "qty": 5.0, "avg_entry_price": 12.16, "current_price": 13.92, "market_value": 6960.0, "unrealized_pl": 880.0, "unrealized_plpc": 14.474}]}, "intraday_trend": {"insufficient_bars": false, "bars_observed": 72, "session_open": 767.32, "last_price": 766.55, "session_high": 767.59, "session_low": 764.73, "net_move_pct": -0.1, "neutral_band_pct": 0.304, "band_note": "vs trailing-60d full-day sigma band; not scaled for elapsed time, partial-day reads are soft", "slope_pct_per_hour": 0.009, "r2": 0.076, "clv": 0.636, "vwap": 765.92, "vwap_above_pct": 36.1, "direction": "NEUTRAL", "conviction": "n/a", "support": 0}}]};</script>
+</body></html>

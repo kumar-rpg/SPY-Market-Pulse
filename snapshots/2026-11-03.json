@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-03",
+  "entries": [
+    {
+      "fired_at_et": "2026-11-03T15:01:37.434016-05:00",
+      "phase": "session",
+      "checkpoint_label": "15:01 ET checkpoint",
+      "basket": {
+        "SPY": {
+          "last": 753.91,
+          "chg_pct": 0.249
+        },
+        "QQQ": {
+          "last": 684.22,
+          "chg_pct": 0.44
+        },
+        "DIA": {
+          "last": 516.88,
+          "chg_pct": -0.466
+        },
+        "IWM": {
+          "last": 280.05,
+          "chg_pct": 0.304
+        },
+        "VIXY": {
+          "last": 18.25,
+          "chg_pct": -1.084
+        }
+      },
+      "market_composite": {
+        "direction": "UP",
+        "score": 0.75,
+        "note": "3/4 of SPY/QQQ/DIA/IWM positive, VIXY down"
+      },
+      "portfolio": {
+        "equity": 5573.35,
+        "cash": 5573.35,
+        "portfolio_value": 5573.35,
+        "day_change": 0.0,
+        "day_change_pct": 0.0,
+        "positions": []
+      },
+      "intraday_trend": {
+        "insufficient_bars": false,
+        "bars_observed": 71,
+        "session_open": 753.4,
+        "last_price": 753.91,
+        "session_high": 757.06,
+        "session_low": 752.44,
+        "net_move_pct": 0.068,
+        "neutral_band_pct": 0.207,
+        "band_note": "vs trailing-60d full-day sigma band; not scaled for elapsed time, partial-day reads are soft",
+        "slope_pct_per_hour": 0.036,
+        "r2": 0.245,
+        "clv": 0.318,
+        "vwap": 754.78,
+        "vwap_above_pct": 64.8,
+        "direction": "NEUTRAL",
+        "conviction": "n/a",
+        "support": 0
+      }
+    }
+  ]
+}
